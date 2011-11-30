@@ -11,10 +11,12 @@ local grid = {
       topOverlap = 49,
       bottomOverlap = 40
    },
+   frame = {
+      top = 40,
+      left = 8
+   },
    width = 10, -- number of cells across
    height = 8, -- number of cells down
-
-
 }
 
 local player = {
@@ -26,11 +28,9 @@ local player = {
 local function toScreenXY(gridX, gridY, isPlayer)
    local c = grid.cell
 
-   local vertOffset
+   local vertOffset = isPlayer and (c.bottomOverlap + c.topOverlap) or c.topOverlap
 
-   if isPlayer then vertOffset = c.bottomOverlap +  c.topOverlap else vertOffset = c.topOverlap end
-
-   return gridX * c.width, gridY * (c.height - c.topOverlap - c.bottomOverlap) - vertOffset
+   return gridX * c.width + grid.frame.left, gridY * (c.height - c.topOverlap - c.bottomOverlap) - vertOffset + grid.frame.top
 end
 
 function love.load()
@@ -44,22 +44,60 @@ end
 
 function love.draw()
 
-   g.setColorMode("replace")
+   g.setBackgroundColor(0, 127, 0)
 
+   -- Draw in the background
    for x = 0, grid.width - 1 do
       for y = 0, grid.height -1 do
          screenX, screenY = toScreenXY(x, y)
          g.draw(images.stone, screenX, screenY)
       end
    end
-   
-   g.setColor(255, 0, 0)
-   g.rectangle("fill", player.screenX, player.screenY, grid.cell.width, grid.cell.height)
---   g.setColor(0, 0, 0, 255)
 
    g.draw(images.boy, player.screenX, player.screenY)
 
+end
 
+function playerMoveComplete()
+   player.moving = false
+end
+
+function movePlayer(xoffset, yoffset)
+
+   player.gridX = player.gridX + xoffset
+   player.gridY = player.gridY + yoffset
+
+   local target = {}
+
+   target.screenX, target.screenY = toScreenXY(player.gridX, player.gridY, true)
+
+   if xoffset == 0 then target.screenX = null end
+   if yoffset == 0 then target.screenY = null end
+
+   player.moving = true
+
+   tween.start(.5, player, target, tween.easing.inOutQuad, playerMoveComplete)
+end
+
+function movePlayerUp()
+   if player.gridY ~= 0 then movePlayer(0, -1) end
+end
+
+function movePlayerLeft()
+   if player.gridX ~= 0 then movePlayer(-1, 0) end
+end
+
+function movePlayerRight()
+   if player.gridX + 1 < grid.width then movePlayer(1, 0) end
+end
+
+function movePlayerDown()
+   if player.gridY + 1 < grid.height then movePlayer(0, 1) end
+end
+
+
+function love.update(dt)
+   tween.update(dt)
 end
 
 function love.keypressed(key, unicode)
@@ -73,5 +111,24 @@ function love.keypressed(key, unicode)
       g.toggleFullscreen()
       return
    end
+   
+   if key == "r" then
+      package.loaded.main = null
+      require("main")
+      love.load()
+      return
+   end
+
+   if not player.moving then
+
+      if key == "up" then movePlayerUp() return end
+
+      if key == "down" then movePlayerDown() return end
+
+      if key == "right" then movePlayerRight() return end
+
+      if key == "left" then movePlayerLeft() return end
+   end
+
 
 end
