@@ -3,6 +3,7 @@ function love.conf(t)
    t.screen.width = 1024
    t.screen.height = 768
    -- t.screen.fullscreen = true
-   t.title = "Love Demo #1"
+   t.title = "Learn Me Some Love2d"
    t.author = "Howard Lewis Ship"
 end
+
