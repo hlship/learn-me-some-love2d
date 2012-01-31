@@ -2,6 +2,8 @@ local g = love.graphics
 
 local tween = require("tween")
 
+require("middleclass")
+
 local images = {}
 
 local grid = {
@@ -36,8 +38,8 @@ end
 function love.load()
    love.keyboard.setKeyRepeat(10, 200)
 
-   images.boy = g.newImage("Character Boy.png")
-   images.stone = g.newImage("Stone Block.png")
+   images.boy = g.newImage("planet-cute/Character Boy.png")
+   images.stone = g.newImage("planet-cute/Stone Block.png")
 
    player.screenX, player.screenY = toScreenXY(player.gridX, player.gridY, true)
 end
