@@ -3,7 +3,7 @@
 -- Allows a global variable's value to be observed and updated via an on-screen HUD-style overlay. 
 -- Multiple such variables can be monitored.
 
-require("middleclass")
+require "middleclass"
 
 -- The namespace to be returned by module
 local params = {}
@@ -12,7 +12,7 @@ local g = love.graphics
 
 -- Still working out the best way to create modules in Lua.  
 
-local Pane = class('Pane')
+local Pane = class "Pane"
 
 local WIDTH = 200 -- Overall width of a pane
 local HEIGHT = 100 -- Height of a pane

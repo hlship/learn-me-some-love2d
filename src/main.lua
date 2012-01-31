@@ -1,8 +1,8 @@
 local g = love.graphics
 
-local tween = require("tween")
+local tween = require "tween"
 
-local params = require("params")
+local params = require "params"
 
 myParam = 87
 
