@@ -4,10 +4,12 @@ local tween = require "tween"
 
 local params = require "params"
 
-myParam = 87
+xpos = 87
+ypos = 103
 
 function love.load()
-   params.param("myParam", 1, 100)
+   params.param("xpos", 1, 100)
+   params.param("ypos", 1, 100)
 end
 
 function love.update(dt)
