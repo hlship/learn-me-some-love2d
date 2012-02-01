@@ -5,7 +5,9 @@
 
 require "middleclass"
 
-local paneImage
+-- Loaded once, inside setup()
+-- Deferring this to ensure that love.graphics is initialized
+local paneImage, nibImage, nibNormalQ, nibDraggingQ
 
 -- The namespace to be returned by module
 local params = {}
@@ -20,9 +22,11 @@ local WIDTH = 200 -- Overall width of a pane
 local HEIGHT = 100 -- Height of a pane
 local TEXT_INSET = 10 -- Inset for the text
 local SLIDER_INSET = 20 -- Inset for the slider control
+local SLIDER_VERT_OFFSET = 40
 
 local WHITE = {255, 255, 255}
 local ORANGE = {255, 138, 0}
+local GREY = {128, 128, 128}
 
 function Pane:initialize(x, y, property, min, max)
    self.x, self.y = x, y
@@ -50,7 +54,8 @@ function Pane:draw()
 
    g.print(self.property, self.x + TEXT_INSET, self.y + TEXT_INSET)
 
-   local value = tostring(_G[self.property])
+   local value = _G[self.property]
+   local valueStr = tostring(value)
 
    local textWidth = g.getFont():getWidth(value)
 
@@ -58,10 +63,32 @@ function Pane:draw()
 
    g.print(value, self.x + WIDTH - TEXT_INSET - textWidth, self.y + TEXT_INSET)
 
+   -- now the slider
+
+   g.setColor(GREY)
+   g.setLineWidth(1)
+
+   local sliderY = self.y + SLIDER_VERT_OFFSET
+   local nibPos = self.minX + (value - self.min) * self.pixelIncrement
+
+   g.line(nibPos + 1, sliderY, self.maxX, sliderY)
+
+   g.setColor(WHITE)
+   g.setLineWidth(2)
+   g.line(self.minX, sliderY, nibPos, sliderY)
+
+
+   g.drawq(nibImage, nibNormalQ, nibPos, sliderY, 0, 1, 1, 8, 8)
+
 end
 
 local function setup()
-   paneImage = paneImage or g.newImage("params/param-pane-bezel.png")
+   if not(paneImage) then
+      paneImage = g.newImage("params/param-pane-bezel.png")
+      nibImage = g.newImage("params/param-slider-nib.png")
+      nibNormalQ = g.newQuad(0, 0, 16, 16, 32, 16)
+      nibDraggingQ = g.newQuad(16, 0, 16, 16, 32, 16)
+   end
 end
 
 local nextPaneY = 2
