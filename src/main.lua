@@ -5,7 +5,7 @@ local tween = require "tween"
 local params = require "params"
 
 xpos = 87
-ypos = 103
+ypos = 23
 
 function love.load()
    params.param("xpos", 1, 100)
