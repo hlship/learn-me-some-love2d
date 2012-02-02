@@ -170,6 +170,9 @@ function params.param(property, min, max)
    nextPaneY = nextPaneY + HEIGHT 
 end
 
+-- TODO: Make integer params distinct
+params.iparam = params.param
+
 -- Must be called at the end of the love.draw() callback to draw the 
 -- parameter panes (above all other graphics).
 
@@ -186,6 +189,10 @@ function params.update()
    for _, pane in pairs(panes) do
       pane:update()
    end
+end
+
+function params.clear()
+   panes = {}
 end
 
 return params
