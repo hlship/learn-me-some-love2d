@@ -11,15 +11,46 @@ max = 100
 
 local WHITE = { 255, 255, 255 }
 local GREY = { 100, 100, 100 }
+local BLUE = {0, 0, 255 }
+
+local demos = {}
+
+for _,name in ipairs({"demos/draw-image"}) do
+   local demo = require(name)
+   table.insert(demos, demo)
+end
+
+local demox
+
+local function demo()
+   return demos[demox]
+end
+
+local function setupDemo(newDemox)
+
+   -- TODO: Do a cleanup on the previous demo
+
+   demox = newDemox
+
+   params.clear()
+   -- Tweens, too?
+
+   -- Invoke demo's setup, if available
+   local setup = demo().setup
+
+   if setup then setup() end
+end
 
 function love.load()
-   params.param("xpos", 1, 100)
-   params.param("ypos", 1, 100)
-   params.param("min", 1, 100)
-   params.param("max", 1, 100)
+   setupDemo(1)
 end
 
 function love.update(dt)
+
+   local update = demo().update
+
+   if update then update() end
+   
    tween.update(dt)
    params.update()
 end
@@ -29,6 +60,10 @@ function love.draw()
    g.setBackgroundColor(WHITE)
 
    drawGrid()
+
+   -- Assume each demo will have a draw()
+
+   demo().draw()
 
    params.draw() -- always last
 end
