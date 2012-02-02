@@ -6,10 +6,17 @@ local params = require "params"
 
 xpos = 87
 ypos = 23
+min = 1
+max = 100
+
+local WHITE = { 255, 255, 255 }
+local GREY = { 100, 100, 100 }
 
 function love.load()
    params.param("xpos", 1, 100)
    params.param("ypos", 1, 100)
+   params.param("min", 1, 100)
+   params.param("max", 1, 100)
 end
 
 function love.update(dt)
@@ -18,7 +25,7 @@ end
 
 function love.draw()
 
-   g.setBackgroundColor(0, 200, 0)
+   g.setBackgroundColor(WHITE)
 
    drawGrid()
 
@@ -26,8 +33,8 @@ function love.draw()
 end
 
 function drawGrid()
-   g.setColor(0, 0, 0)
-   g.setLineWidth(2)
+   g.setColor(GREY)
+   g.setLineWidth(1)
 
    local width, height = g.getWidth(), g.getHeight()
 
@@ -53,7 +60,7 @@ function love.keypressed(key, unicode)
    
    if key == "r" then
       package.loaded.main = null
-      require("main")
+      require "main"
       love.load()
       return
    end
