@@ -13,6 +13,7 @@ local paneImage, nibImage, nibNormalQ, nibDraggingQ
 local params = {}
 
 local g = love.graphics
+local m = love.mouse
 
 -- Still working out the best way to create modules in Lua.  
 
@@ -41,8 +42,9 @@ function Pane:initialize(x, y, property, min, max)
 
    local value = _G[self.property]
 
-   self.nibY = y - 60
+   self.nibY = y + SLIDER_VERT_OFFSET
    self.nibX = self.minX + (value - min) * self.pixelIncrement
+
 end
 
 
@@ -55,31 +57,87 @@ function Pane:draw()
    g.print(self.property, self.x + TEXT_INSET, self.y + TEXT_INSET)
 
    local value = _G[self.property]
-   local valueStr = tostring(value)
+   local valueStr = string.format("%.2f", value)
 
-   local textWidth = g.getFont():getWidth(value)
+   local textWidth = g.getFont():getWidth(valueStr)
 
    g.setColor(ORANGE)
 
-   g.print(value, self.x + WIDTH - TEXT_INSET - textWidth, self.y + TEXT_INSET)
+   g.print(valueStr, self.x + WIDTH - TEXT_INSET - textWidth, self.y + TEXT_INSET)
 
    -- now the slider
 
    g.setColor(GREY)
    g.setLineWidth(1)
 
-   local sliderY = self.y + SLIDER_VERT_OFFSET
-   local nibPos = self.minX + (value - self.min) * self.pixelIncrement
-
-   g.line(nibPos + 1, sliderY, self.maxX, sliderY)
+   g.line(self.nibX + 1, self.nibY, self.maxX, self.nibY)
 
    g.setColor(WHITE)
    g.setLineWidth(2)
-   g.line(self.minX, sliderY, nibPos, sliderY)
+   g.line(self.minX, self.nibY, self.nibX, self.nibY)
 
+   local quad = (self.dragState == "dragging") and nibDraggingQ or nibNormalQ
 
-   g.drawq(nibImage, nibNormalQ, nibPos, sliderY, 0, 1, 1, 8, 8)
+   g.drawq(nibImage, quad, self.nibX, self.nibY, 0, 1, 1, 8, 8)
+end
 
+function Pane:update()
+
+   local clicked = m.isDown("l")
+
+   if not clicked then
+      self.dragState = null
+      self.dragXOffset = null
+      return
+   end
+
+   if self.dragState == "dragging" then
+      self:dragNib()
+      return
+   end
+
+   -- If the initial click was not on the nib, then ignore until the release
+   if self.dragState == "invalid" then
+      return
+   end
+
+   if self:isMouseOverNib() then
+      self.dragState = "dragging"
+      self.dragXOffset = self.nibX - m.getX()
+      return
+   end
+
+   -- Initial click not on nib
+   self.dragState = "invalid"
+end
+
+local function inRange(value, min, max)
+   return min <= value and value <= max
+end
+
+function Pane:isMouseOverNib()
+   local mx, my = m.getPosition()
+
+   return inRange(mx, self.nibX - 8, self.nibX + 8) and
+      inRange(my, self.nibY - 8, self.nibY + 8)
+end
+
+function Pane:dragNib()
+   local x = m.getX() + self.dragXOffset
+
+   if x < self.minX then
+      x = self.minX
+   end
+
+   if x > self.maxX then
+      x = self.maxX
+   end
+   
+   self.nibX = x
+
+   local newValue = (x - self.minX) / self.pixelIncrement + self.min
+
+   _G[self.property] = newValue
 end
 
 local function setup()
@@ -106,7 +164,7 @@ function params.param(property, min, max)
 
    table.insert(panes, Pane:new(2, nextPaneY, property, min, max))
 
-   nextPaneY = nextPaneY + HEIGHT
+   nextPaneY = nextPaneY + HEIGHT 
 end
 
 -- Must be called at the end of the love.draw() callback to draw the 
@@ -115,6 +173,15 @@ end
 function params.draw() 
    for _, pane in pairs(panes) do
       pane:draw()
+   end
+end
+
+-- Called to handle updates: primarily, checking to see ift he mouse is dragging
+-- the slider inside each parameters pane. Should be called from the game's love.update()
+-- callback.
+function params.update()
+   for _, pane in pairs(panes) do
+      pane:update()
    end
 end
 

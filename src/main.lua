@@ -21,6 +21,7 @@ end
 
 function love.update(dt)
    tween.update(dt)
+   params.update()
 end
 
 function love.draw()
