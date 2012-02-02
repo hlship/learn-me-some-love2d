@@ -3,6 +3,9 @@
 -- Allows a global variable's value to be observed and updated via an on-screen HUD-style overlay. 
 -- Multiple such variables can be monitored.
 
+-- This is starting to cry out for a more organized approach to managing the panes, and the areas inside
+-- the panes, but I don't want to get too involved in a major windows/ui endeavor here. Maybe later.
+
 require "middleclass"
 
 -- Loaded once, inside setup()
