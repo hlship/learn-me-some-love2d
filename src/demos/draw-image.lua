@@ -10,7 +10,7 @@ local demo = {
    name = "Draw Image"
 }
 
-local YELLOW = {255, 255, 0}
+local RED = {255, 0, 0}
 
 function demo.setup() 
    x, y, r, sx, sy, ox, oy = 400, 300, 0, 1, 1, 58, 65
@@ -31,8 +31,8 @@ function demo.draw()
    g.setColorMode("replace")
    g.draw(image, x, y, r, sx, sy, ox, oy)
 
-   -- And a yellow line on top, to identify the x,y position
-   g.setColor(YELLOW)
+   -- And a line on top, to identify the x,y position
+   g.setColor(RED)
    g.setLineWidth(1)
    g.line(0, y, g.getWidth(), y)
    g.line(x, 0, x, g.getHeight())
