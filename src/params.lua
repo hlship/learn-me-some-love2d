@@ -10,7 +10,7 @@ require "middleclass"
 
 -- Loaded once, inside setup()
 -- Deferring this to ensure that love.graphics is initialized
-local paneImage, nibImage, nibNormalQ, nibDraggingQ
+local paneImage, nibImage, nibNormalQ, nibDraggingQ, defaultFont
 
 -- The namespace to be returned by module
 local params = {}
@@ -53,9 +53,11 @@ end
 
 function Pane:draw()
 
-   g.setColor(WHITE)
-
+   g.setColorMode("replace")
    g.draw(paneImage, self.x, self.y)
+
+   g.setColorMode("modulate")
+   g.setColor(WHITE)
 
    g.print(self.property, self.x + TEXT_INSET, self.y + TEXT_INSET)
 
@@ -152,6 +154,8 @@ local function setup()
       nibImage = g.newImage "params/param-slider-nib.png"
       nibNormalQ = g.newQuad(0, 0, 16, 16, 32, 16)
       nibDraggingQ = g.newQuad(16, 0, 16, 16, 32, 16)
+
+      defaultFont = g.newFont()
    end
 end
 
@@ -177,6 +181,11 @@ params.iparam = params.param
 -- parameter panes (above all other graphics).
 
 function params.draw() 
+   -- Reset to the default font
+   -- We'll set colors, and except that most everything else is in
+   -- default state.
+   g.setFont(defaultFont)
+
    for _, pane in pairs(panes) do
       pane:draw()
    end
