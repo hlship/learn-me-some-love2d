@@ -21,6 +21,7 @@ local m = love.mouse
 -- Still working out the best way to create modules in Lua.  
 
 local Pane = class "Pane"
+local FloatPane = Pane:subclass("FloatPane")
 
 local WIDTH -- Overall width of a pane
 local HEIGHT -- Height of a pane
@@ -165,17 +166,17 @@ local panes = {}
 -- Creates a new standard parameter pane; the parameter value can
 -- range across the floating values between min and max
 -- This is typically invoked from the love.load() callback
-function params.param(property, min, max) 
+function params.float(property, min, max) 
 
    setup()
 
-   table.insert(panes, Pane:new(2, nextPaneY, property, min, max))
+   table.insert(panes, FloatPane:new(2, nextPaneY, property, min, max))
 
    nextPaneY = nextPaneY + HEIGHT 
 end
 
 -- TODO: Make integer params distinct
-params.iparam = params.param
+params.int = params.float
 
 -- Must be called at the end of the love.draw() callback to draw the 
 -- parameter panes (above all other graphics).

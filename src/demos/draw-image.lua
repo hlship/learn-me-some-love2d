@@ -15,13 +15,13 @@ local RED = {255, 0, 0}
 function demo.setup() 
    x, y, r, sx, sy, ox, oy = 400, 300, 0, 1, 1, 58, 65
 
-   p.iparam("x", 0, g.getWidth())
-   p.iparam("y", 0, g.getHeight())
-   p.param("r", - math.pi, math.pi)
-   p.param("sx", -10, 10)
-   p.param("sy", -10, 10)
-   p.iparam("ox", -200, 200)
-   p.iparam("oy", -200, 200)
+   p.int("x", 0, g.getWidth())
+   p.int("y", 0, g.getHeight())
+   p.float("r", - math.pi, math.pi)
+   p.float("sx", -10, 10)
+   p.float("sy", -10, 10)
+   p.int("ox", -200, 200)
+   p.int("oy", -200, 200)
 
    image = image or g.newImage("tyrian-remastered/Boss D.png")
 

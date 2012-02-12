@@ -12,7 +12,7 @@ It's as simple as defining the variable:
 	
 and then (inside a setup() function):
 
-	params.param("scale", 1, 100)
+	params.float("scale", 1, 100)
 	
 The parameters are the minimum and maximum value.
 
