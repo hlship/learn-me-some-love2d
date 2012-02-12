@@ -66,6 +66,10 @@ function love.draw()
    demo().draw()
 
    params.draw() -- always last
+
+   g.setColor(BLUE)
+   local fps = string.format("FPS: %.2d", love.timer.getFPS())
+   g.print(fps, g.getWidth() - g.getFont():getWidth(fps), 0)
 end
 
 function drawGrid()
