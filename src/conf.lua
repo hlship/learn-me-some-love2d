@@ -1,8 +1,7 @@
 function love.conf(t)
    -- Classic screen size:
-   t.screen.width = 1024
-   t.screen.height = 768
-   -- t.screen.fullscreen = true
+   t.screen.width = 800
+   t.screen.height = 600
    t.title = "Learn Me Some Love2d"
    t.author = "Howard Lewis Ship"
 end
