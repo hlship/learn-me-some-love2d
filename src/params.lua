@@ -21,7 +21,6 @@ local m = love.mouse
 -- Still working out the best way to create modules in Lua.  
 
 local Pane = class "Pane"
-local FloatPane = Pane:subclass("FloatPane")
 
 local WIDTH -- Overall width of a pane
 local HEIGHT -- Height of a pane
@@ -51,6 +50,11 @@ function Pane:initialize(x, y, property, min, max)
 
 end
 
+-- Formats the value (a number) as a string to be displayed
+-- inside the UI
+function Pane:format(value)
+   return "NYI"
+end
 
 function Pane:draw()
 
@@ -63,7 +67,7 @@ function Pane:draw()
    g.print(self.property, self.x + TEXT_INSET, self.y + TEXT_INSET)
 
    local value = _G[self.property]
-   local valueStr = string.format("%.2f", value)
+   local valueStr = self:format(value)
 
    local textWidth = g.getFont():getWidth(valueStr)
 
@@ -128,6 +132,10 @@ function Pane:isMouseOverNib()
       inRange(my, self.nibY - 8, self.nibY + 8)
 end
 
+function Pane:normalizeValue(value)
+   return value
+end
+
 function Pane:dragNib()
    local x = m.getX() + self.dragXOffset
 
@@ -143,7 +151,24 @@ function Pane:dragNib()
 
    local newValue = (x - self.minX) / self.pixelIncrement + self.min
 
-   _G[self.property] = newValue
+   _G[self.property] = self:normalizeValue(newValue)
+end
+
+
+local FloatPane = Pane:subclass("FloatPane")
+local IntPane = Pane:subclass("IntPane")
+
+function FloatPane:format(value)
+   return string.format("%.2f", value)
+end
+
+
+function IntPane:format(value)
+   return tostring(value)
+end
+
+function IntPane:normalizeValue(value)
+   return math.floor(value)
 end
 
 local function setup()
@@ -163,20 +188,25 @@ end
 local nextPaneY = 2
 local panes = {}
 
+local function create(paneClass, property, min, max)
+   setup()
+
+   table.insert(panes, paneClass:new(2, nextPaneY, property, min, max))
+
+   nextPaneY = nextPaneY + HEIGHT
+end
+
 -- Creates a new standard parameter pane; the parameter value can
 -- range across the floating values between min and max
 -- This is typically invoked from the love.load() callback
 function params.float(property, min, max) 
 
-   setup()
-
-   table.insert(panes, FloatPane:new(2, nextPaneY, property, min, max))
-
-   nextPaneY = nextPaneY + HEIGHT 
+   create(FloatPane, property, min, max)
 end
 
--- TODO: Make integer params distinct
-params.int = params.float
+function params.int(property, min, max)
+   create(IntPane, property, min, max)
+end
 
 -- Must be called at the end of the love.draw() callback to draw the 
 -- parameter panes (above all other graphics).
