@@ -15,15 +15,15 @@ local BLUE = {0, 0, 255 }
 
 local demos = {}
 
-for _, details in ipairs({ { name = "demos/draw-image", title = "Draw/Scale/Rotate Image"} }) do
-   local demo = require(details.name)
-   table.insert(demos, { title = details.title, code = demo })
+for _, name in ipairs({ "demos/draw-image"}) do
+   local demo = require(name)
+   table.insert(demos, demo)
 end
 
 local demox
 
 local function demo()
-   return demos[demox].code
+   return demos[demox]
 end
 
 local function setupDemo(newDemox)
@@ -70,7 +70,7 @@ function love.draw()
    g.setColor(BLUE)
    g.setColorMode("modulate")
 
-   local title = demos[demox].title
+   local title = demo().title or string.format("Untitled Demo #%d", demox)
    g.print(title, g.getWidth() / 2 - g.getFont():getWidth(title) / 2, 0)
 
    local fps = string.format("FPS: %.2d", love.timer.getFPS())

@@ -12,6 +12,8 @@ local demo = {
 
 local RED = {255, 0, 0}
 
+demo.title = "Display/Scale/Rotate Image"
+
 function demo.setup() 
    x, y, r, sx, sy, ox, oy = 400, 300, 0, 1, 1, 58, 65
 
@@ -38,7 +40,7 @@ function demo.draw()
    g.line(x, 0, x, g.getHeight())
 end
 
-return demo
+return demo 
 
 
 
