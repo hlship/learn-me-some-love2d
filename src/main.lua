@@ -15,7 +15,7 @@ local BLUE = {0, 0, 255 }
 
 local demos = {}
 
-for _, name in ipairs({ "demos/draw-image"}) do
+for _, name in ipairs({ "demos/draw-image", "demos/draw-font"}) do
    local demo = require(name)
    table.insert(demos, demo)
 end
@@ -49,7 +49,7 @@ function love.update(dt)
 
    local update = demo().update
 
-   if update then update() end
+   if update then update(dt) end
    
    tween.update(dt)
    params.update()
@@ -110,4 +110,17 @@ function love.keypressed(key, unicode)
       return
    end
 
+   if key == "n" then
+      demox = demox + 1
+      if (demox > #demos) then demox = 1 end
+      setupDemo(demox)
+      return
+   end
+
+   if key == "p" then
+      demox = demox - 1
+      if (demox < 1) then demox = #demos end
+      setupDemo(demox)
+      return
+   end
 end
