@@ -233,6 +233,7 @@ end
 
 function params.clear()
    panes = {}
+   nextPaneY = 2
 end
 
 return params
